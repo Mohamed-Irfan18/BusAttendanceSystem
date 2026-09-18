@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>College Bus Attendance</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🚌
+        </div>
+
+        <div>
+            <h1>College Bus Attendance</h1>
+            <p>Faculty Attendance Portal</p>
+        </div>
+
+    </div>
+
+    <div class="faculty-badge">
+        <span class="status-dot"></span>
+        Faculty Panel
+    </div>
+
+</header>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+    <!-- BUS SELECTION -->
+
+    <section class="selection-card">
+
+        <div class="section-label">
+            BUS MANAGEMENT
+        </div>
+
+        <h2>Select Bus</h2>
+
+        <p class="description">
+            Enter the bus number to manage today's student attendance.
+        </p>
+
+
+        <div class="bus-selector">
+
+            <div class="input-wrapper">
+
+                <span class="input-icon">🚌</span>
+
+                <input
+                        type="number"
+                        id="busNumberInput"
+                        placeholder="Enter bus number"
+                        min="1"
+                        onkeydown="handleEnter(event)"
+                >
+
+            </div>
+
+
+            <button
+                    class="primary-button"
+                    onclick="selectBus()"
+            >
+                View Bus
+                <span>→</span>
+            </button>
+
+        </div>
+
+
+        <p id="busError" class="error-message"></p>
+
+    </section>
+
+
+
+    <!-- ================= ATTENDANCE DASHBOARD ================= -->
+
+    <section
+            id="attendanceSection"
+            class="dashboard"
+            style="display: none;"
+    >
+
+
+        <!-- BUS HEADER -->
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <div class="bus-label">
+                    CURRENT BUS
+                </div>
+
+                <h2 id="busTitle">
+                    Bus 1
+                </h2>
+
+                <p id="busRoute">
+                    Route
+                </p>
+
+            </div>
+
+
+            <div class="date-box">
+
+                <span>Today's Attendance</span>
+
+                <strong id="currentDate">
+                    --
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= STAT CARDS ================= -->
+
+        <div class="stats">
+
+
+            <div class="stat-card total-card">
+
+                <div class="stat-icon">
+                    👥
+                </div>
+
+                <div>
+
+                    <p>Total Students</p>
+
+                    <h3 id="totalStudents">
+                        0
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card present-card">
+
+                <div class="stat-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <p>Present</p>
+
+                    <h3 id="presentStudents">
+                        0
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card absent-card">
+
+                <div class="stat-icon">
+                    !
+                </div>
+
+                <div>
+
+                    <p>Absent</p>
+
+                    <h3 id="absentStudents">
+                        0
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= PROGRESS ================= -->
+
+        <div class="progress-card">
+
+            <div class="progress-header">
+
+                <span>Attendance Progress</span>
+
+                <strong id="attendancePercentage">
+                    0%
+                </strong>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div
+                        id="progressFill"
+                        class="progress-fill"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= SCANNER ================= -->
+
+        <div class="scanner-card">
+
+            <div class="scanner-heading">
+
+                <div>
+
+                    <h2>Mark Attendance</h2>
+
+                    <p>
+                        Scan the barcode on the student's college ID card.
+                    </p>
+
+                </div>
+
+                <div class="scanner-icon">
+                    📷
+                </div>
+
+            </div>
+
+
+            <button
+                    id="scanButton"
+                    class="scan-button"
+                    onclick="startScanner()"
+            >
+
+                <span>📷</span>
+
+                Scan Student ID
+
+            </button>
+
+
+            <div
+                    id="reader"
+                    class="reader"
+            ></div>
+
+
+            <!-- MANUAL FALLBACK -->
+
+            <div class="manual-section">
+
+                <span class="or-text">
+                    OR ENTER ROLL NUMBER
+                </span>
+
+                <div class="manual-input">
+
+                    <input
+                            type="text"
+                            id="manualStudentId"
+                            placeholder="Example: 23EE031"
+                    >
+
+                    <button onclick="manualAttendance()">
+                        Mark
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                    id="scanResult"
+                    class="scan-result"
+            ></div>
+
+        </div>
+
+
+
+        <!-- ================= ABSENTEES ================= -->
+
+        <div class="absentee-card">
+
+            <div class="table-header">
+
+                <div>
+
+                    <h2>Absent Students</h2>
+
+                    <p>
+                        Students who have not been scanned today
+                    </p>
+
+                </div>
+
+                <div
+                        id="absentBadge"
+                        class="absent-badge"
+                >
+                    0 Absent
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Roll Number</th>
+
+                        <th>Student Name</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="absenteeList">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <p>
+        College Bus Attendance System
+    </p>
+
+    <span>
+        Powered by Spring Boot
+    </span>
+
+</footer>
+
+
+
+<!-- QR / BARCODE LIBRARY -->
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<!-- OUR JAVASCRIPT -->
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
