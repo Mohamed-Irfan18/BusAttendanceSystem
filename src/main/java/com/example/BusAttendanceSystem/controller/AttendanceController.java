@@ -1,5 +1,6 @@
 package com.example.BusAttendanceSystem.controller;
 
+import com.example.BusAttendanceSystem.dto.AttendanceCheckResponse;
 import com.example.BusAttendanceSystem.dto.AttendanceSummary;
 import com.example.BusAttendanceSystem.entity.Attendance;
 import com.example.BusAttendanceSystem.service.AttendanceService;
@@ -30,12 +31,40 @@ public class AttendanceController {
         );
     }
 
+
+    // CHECK STUDENT BEFORE MARKING ATTENDANCE
+    @PostMapping("/check")
+    public AttendanceCheckResponse checkAttendance(
+            @RequestParam String studentId,
+            @RequestParam Integer busId) {
+
+        return attendanceService.checkAttendance(
+                studentId,
+                busId
+        );
+    }
+
+
+    // ALLOW STUDENT FROM ANOTHER BUS
+    @PostMapping("/allow")
+    public Attendance allowAttendance(
+            @RequestParam String studentId,
+            @RequestParam Integer busId) {
+
+        return attendanceService.allowAttendance(
+                studentId,
+                busId
+        );
+    }
+
+
     // GET ALL ATTENDANCE
     @GetMapping
     public List<Attendance> getAllAttendance() {
 
         return attendanceService.getAllAttendance();
     }
+
 
     // GET ATTENDANCE SUMMARY FOR A BUS
     @GetMapping("/bus/{busId}")

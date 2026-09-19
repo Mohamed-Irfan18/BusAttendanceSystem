@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     displayCurrentDate();
 
+    createApprovalModal();
+
 });
 
 
@@ -83,7 +85,6 @@ function selectBus() {
             "Please enter a bus number.";
 
         return;
-
     }
 
 
@@ -93,7 +94,6 @@ function selectBus() {
             "Bus number must be greater than 0.";
 
         return;
-
     }
 
 
@@ -144,7 +144,6 @@ function selectBus() {
                 ).style.display = "none";
 
                 return;
-
             }
 
 
@@ -330,9 +329,12 @@ function loadAttendance(busId) {
 
                 row.innerHTML = `
                     <td colspan="4"
-                        style="text-align:center;
-                        color:#16a34a;
-                        padding:25px;">
+                        style="
+                            text-align:center;
+                            color:#16a34a;
+                            padding:25px;
+                            font-weight:600;
+                        ">
                         ✓ All students are present
                     </td>
                 `;
@@ -389,6 +391,7 @@ function loadAttendance(busId) {
 
             console.error(error);
 
+
             document.getElementById(
                 "scanResult"
             ).innerText =
@@ -414,7 +417,6 @@ function startScanner() {
         );
 
         return;
-
     }
 
 
@@ -643,9 +645,7 @@ function manualAttendance() {
 // MARK ATTENDANCE
 // =====================================================
 
-function markAttendance(
-    studentId
-) {
+function markAttendance(studentId) {
 
     if (selectedBusId === null) {
 
@@ -660,9 +660,20 @@ function markAttendance(
         "Checking student...";
 
 
+    document.getElementById(
+        "scanResult"
+    ).style.color =
+        "#3264e8";
+
+
+    // =================================================
+    // NEW API
+    // /attendance/check
+    // =================================================
+
     fetch(
 
-        "/attendance/mark"
+        "/attendance/check"
         +
         "?studentId="
         +
@@ -698,32 +709,29 @@ function markAttendance(
         .then(result => {
 
             console.log(
-                "Attendance result:",
+                "Attendance check result:",
                 result
             );
 
 
-            // ==========================
-            // SUCCESS
-            // ==========================
+            const data =
+                result.data;
+
+
+            // =================================================
+            // NORMAL STUDENT
+            // =================================================
 
             if (
-                result.status >= 200
-                &&
-                result.status < 300
+                result.status >= 200 &&
+                result.status < 300 &&
+                data.status === "PRESENT"
             ) {
 
-                document.getElementById(
-                    "scanResult"
-                ).innerText =
-                    "✓ Attendance marked for "
-                    + studentId;
-
-
-                document.getElementById(
-                    "scanResult"
-                ).style.color =
-                    "#16a34a";
+                showScanSuccess(
+                    data.studentName ||
+                    studentId
+                );
 
 
                 // Refresh dashboard
@@ -732,38 +740,427 @@ function markAttendance(
                     selectedBusId
                 );
 
+                return;
+
             }
 
 
-                // ==========================
-                // ERROR
-            // ==========================
+            // =================================================
+            // STUDENT FROM ANOTHER BUS
+            // =================================================
+
+            if (
+                result.status >= 200 &&
+                result.status < 300 &&
+                data.status === "APPROVAL_REQUIRED"
+            ) {
+
+                showApprovalModal(
+                    data
+                );
+
+                return;
+
+            }
+
+
+            // =================================================
+            // ERROR
+            // =================================================
+
+            const message =
+                data.message
+                ||
+                "Unable to check attendance";
+
+
+            showScanError(
+                message
+            );
+
+        })
+
+
+        .catch(error => {
+
+            console.error(error);
+
+
+            showScanError(
+                "Server error while checking attendance."
+            );
+
+        });
+
+}
+
+
+// =====================================================
+// SUCCESS MESSAGE
+// =====================================================
+
+function showScanSuccess(studentName) {
+
+    const result =
+        document.getElementById(
+            "scanResult"
+        );
+
+
+    result.innerText =
+        "✓ Attendance marked for "
+        + studentName;
+
+
+    result.style.color =
+        "#16a34a";
+
+
+    result.style.background =
+        "#eafaf0";
+
+
+    result.style.padding =
+        "10px";
+
+
+    result.style.borderRadius =
+        "10px";
+
+
+    setTimeout(() => {
+
+        result.style.background =
+            "transparent";
+
+    }, 2500);
+
+}
+
+
+// =====================================================
+// ERROR MESSAGE
+// =====================================================
+
+function showScanError(message) {
+
+    const result =
+        document.getElementById(
+            "scanResult"
+        );
+
+
+    result.innerText =
+        message;
+
+
+    result.style.color =
+        "#dc2626";
+
+
+    result.style.background =
+        "#fff1f1";
+
+
+    result.style.padding =
+        "10px";
+
+
+    result.style.borderRadius =
+        "10px";
+
+}
+
+
+// =====================================================
+// CREATE APPROVAL MODAL
+// =====================================================
+
+function createApprovalModal() {
+
+    // Prevent duplicate modal
+
+    if (
+        document.getElementById(
+            "approvalModal"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const modal =
+        document.createElement("div");
+
+
+    modal.id =
+        "approvalModal";
+
+
+    modal.innerHTML = `
+
+        <div class="approval-overlay">
+
+            <div class="approval-box">
+
+                <div class="approval-icon">
+                    ⚠️
+                </div>
+
+                <h2>
+                    Bus Assignment Notice
+                </h2>
+
+                <p
+                    id="approvalMessage"
+                    class="approval-message">
+                </p>
+
+                <div class="student-info">
+
+                    <div>
+                        <span>Student</span>
+                        <strong id="approvalStudentName">
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Student ID</span>
+                        <strong id="approvalStudentId">
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Assigned Bus</span>
+                        <strong id="approvalAssignedBus">
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Current Bus</span>
+                        <strong id="approvalCurrentBus">
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <p class="approval-question">
+                    Allow this student to travel
+                    on the current bus?
+                </p>
+
+
+                <div class="approval-buttons">
+
+                    <button
+                        id="denyButton"
+                        class="deny-button"
+                        onclick="denyAttendance()">
+
+                        Deny
+
+                    </button>
+
+
+                    <button
+                        id="allowButton"
+                        class="allow-button"
+                        onclick="allowAttendance()">
+
+                        ✓ Allow
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    // Add modal CSS dynamically
+
+    addApprovalModalStyles();
+
+}
+
+
+// =====================================================
+// SHOW APPROVAL MODAL
+// =====================================================
+
+let approvalStudentId = null;
+
+
+function showApprovalModal(data) {
+
+    approvalStudentId =
+        data.studentId;
+
+
+    document.getElementById(
+        "approvalMessage"
+    ).innerText =
+        data.message;
+
+
+    document.getElementById(
+        "approvalStudentName"
+    ).innerText =
+        data.studentName;
+
+
+    document.getElementById(
+        "approvalStudentId"
+    ).innerText =
+        data.studentId;
+
+
+    document.getElementById(
+        "approvalAssignedBus"
+    ).innerText =
+        "Bus " + data.assignedBusId;
+
+
+    document.getElementById(
+        "approvalCurrentBus"
+    ).innerText =
+        "Bus " + data.currentBusId;
+
+
+    document.getElementById(
+        "approvalModal"
+    ).style.display =
+        "flex";
+
+}
+
+
+// =====================================================
+// ALLOW ATTENDANCE
+// =====================================================
+
+function allowAttendance() {
+
+    if (
+        approvalStudentId === null
+    ) {
+
+        return;
+
+    }
+
+
+    const allowButton =
+        document.getElementById(
+            "allowButton"
+        );
+
+
+    const denyButton =
+        document.getElementById(
+            "denyButton"
+        );
+
+
+    allowButton.disabled = true;
+
+    denyButton.disabled = true;
+
+
+    allowButton.innerText =
+        "Allowing...";
+
+
+    fetch(
+
+        "/attendance/allow"
+        +
+        "?studentId="
+        +
+        encodeURIComponent(
+            approvalStudentId
+        )
+        +
+        "&busId="
+        +
+        selectedBusId,
+
+        {
+            method: "POST"
+        }
+
+    )
+
+
+        .then(response => {
+
+            return response.json()
+
+                .then(data => ({
+
+                    status:
+                    response.status,
+
+                    data: data
+
+                }));
+
+        })
+
+
+        .then(result => {
+
+            console.log(
+                "Allow result:",
+                result
+            );
+
+
+            if (
+                result.status >= 200 &&
+                result.status < 300
+            ) {
+
+                closeApprovalModal();
+
+
+                showScanSuccess(
+                    result.data.student?.name
+                    ||
+                    approvalStudentId
+                );
+
+
+                loadAttendance(
+                    selectedBusId
+                );
+
+            }
 
             else {
 
                 const message =
                     result.data.message
                     ||
-                    "Unable to mark attendance";
+                    "Unable to allow attendance";
 
 
-                document.getElementById(
-                    "scanResult"
-                ).innerText =
-                    message;
+                closeApprovalModal();
 
 
-                document.getElementById(
-                    "scanResult"
-                ).style.color =
-                    "#dc2626";
-
-
-                // Don't use alert every time.
-                // Dashboard itself shows error.
-
-                loadAttendance(
-                    selectedBusId
+                showScanError(
+                    message
                 );
 
             }
@@ -776,17 +1173,430 @@ function markAttendance(
             console.error(error);
 
 
-            document.getElementById(
-                "scanResult"
-            ).innerText =
-                "Server error while marking attendance.";
+            closeApprovalModal();
 
 
-            document.getElementById(
-                "scanResult"
-            ).style.color =
-                "#dc2626";
+            showScanError(
+                "Server error while allowing attendance."
+            );
 
         });
+
+}
+
+
+// =====================================================
+// DENY ATTENDANCE
+// =====================================================
+
+function denyAttendance() {
+
+    console.log(
+        "Attendance denied for:",
+        approvalStudentId
+    );
+
+
+    closeApprovalModal();
+
+
+    const result =
+        document.getElementById(
+            "scanResult"
+        );
+
+
+    result.innerText =
+        "Attendance denied.";
+
+
+    result.style.color =
+        "#dc2626";
+
+
+    result.style.background =
+        "#fff1f1";
+
+
+    result.style.padding =
+        "10px";
+
+
+    result.style.borderRadius =
+        "10px";
+
+
+    setTimeout(() => {
+
+        result.style.background =
+            "transparent";
+
+    }, 2500);
+
+
+    approvalStudentId = null;
+
+}
+
+
+// =====================================================
+// CLOSE APPROVAL MODAL
+// =====================================================
+
+function closeApprovalModal() {
+
+    const modal =
+        document.getElementById(
+            "approvalModal"
+        );
+
+
+    if (modal) {
+
+        modal.style.display =
+            "none";
+
+    }
+
+
+    approvalStudentId = null;
+
+}
+
+
+// =====================================================
+// APPROVAL MODAL STYLES
+// =====================================================
+
+function addApprovalModalStyles() {
+
+    const style =
+        document.createElement("style");
+
+
+    style.innerHTML = `
+
+        #approvalModal {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 9999;
+
+        }
+
+
+        .approval-overlay {
+
+            width: 100%;
+
+            height: 100%;
+
+            background:
+                rgba(15, 23, 42, 0.65);
+
+            backdrop-filter:
+                blur(5px);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+        }
+
+
+        .approval-box {
+
+            width: 100%;
+
+            max-width: 460px;
+
+            background: white;
+
+            border-radius: 22px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            box-shadow:
+                0 25px 70px
+                rgba(0, 0, 0, 0.25);
+
+            animation:
+                approvalPopup
+                0.25s ease;
+
+        }
+
+
+        .approval-icon {
+
+            width: 58px;
+
+            height: 58px;
+
+            margin: 0 auto 15px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #fff7e6;
+
+            font-size: 27px;
+
+        }
+
+
+        .approval-box h2 {
+
+            font-size: 21px;
+
+            color: #172033;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .approval-message {
+
+            color: #6b7280;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .student-info {
+
+            background: #f7f8fa;
+
+            border: 1px solid #edf0f4;
+
+            border-radius: 14px;
+
+            padding: 15px;
+
+            text-align: left;
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 14px;
+
+        }
+
+
+        .student-info div {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 4px;
+
+        }
+
+
+        .student-info span {
+
+            font-size: 10px;
+
+            color: #8992a3;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+        }
+
+
+        .student-info strong {
+
+            font-size: 13px;
+
+            color: #172033;
+
+        }
+
+
+        .approval-question {
+
+            margin: 20px 0;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #374151;
+
+        }
+
+
+        .approval-buttons {
+
+            display: flex;
+
+            gap: 12px;
+
+        }
+
+
+        .approval-buttons button {
+
+            flex: 1;
+
+            height: 48px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        .deny-button {
+
+            background: #fff1f1;
+
+            color: #dc2626;
+
+            border: 1px solid #fecaca !important;
+
+        }
+
+
+        .deny-button:hover {
+
+            background: #fee2e2;
+
+            transform: translateY(-1px);
+
+        }
+
+
+        .allow-button {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #16a34a,
+                    #22c55e
+                );
+
+            color: white;
+
+            box-shadow:
+                0 7px 18px
+                rgba(22, 163, 74, 0.20);
+
+        }
+
+
+        .allow-button:hover {
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 10px 22px
+                rgba(22, 163, 74, 0.28);
+
+        }
+
+
+        .approval-buttons button:disabled {
+
+            opacity: 0.55;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+        }
+
+
+        @keyframes approvalPopup {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(15px)
+                    scale(0.97);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .approval-box {
+
+                padding: 22px;
+
+            }
+
+
+            .student-info {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .approval-buttons {
+
+                flex-direction: column-reverse;
+
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(
+        style
+    );
 
 }
