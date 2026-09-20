@@ -42,7 +42,7 @@
 <main class="container">
 
 
-    <!-- BUS SELECTION -->
+    <!-- ================= BUS SELECTION ================= -->
 
     <section class="selection-card">
 
@@ -100,7 +100,7 @@
     >
 
 
-        <!-- BUS HEADER -->
+        <!-- ================= BUS HEADER ================= -->
 
         <div class="dashboard-header">
 
@@ -128,6 +128,197 @@
                 <strong id="currentDate">
                     --
                 </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= ATTENDANCE REPORT ================= -->
+
+        <div class="report-card">
+
+            <div class="report-heading">
+
+                <div>
+
+                    <div class="section-label">
+                        ATTENDANCE REPORT
+                    </div>
+
+                    <h2>
+                        View Previous Attendance
+                    </h2>
+
+                    <p>
+                        Select a date to view the attendance recorded for this bus.
+                    </p>
+
+                </div>
+
+                <div class="report-icon">
+                    📊
+                </div>
+
+            </div>
+
+
+            <!-- REPORT CONTROLS -->
+
+            <div class="report-controls">
+
+                <div class="report-date-wrapper">
+
+                    <label for="reportDate">
+                        Select Date
+                    </label>
+
+                    <input
+                            type="date"
+                            id="reportDate"
+                    >
+
+                </div>
+
+
+                <button
+                        type="button"
+                        class="primary-button"
+                        onclick="loadAttendanceReport()"
+                >
+                    View Report
+                    <span>→</span>
+                </button>
+
+            </div>
+
+
+            <!-- REPORT MESSAGE -->
+
+            <div
+                    id="reportMessage"
+                    class="report-message"
+            ></div>
+
+
+            <!-- REPORT RESULT -->
+
+            <div
+                    id="reportResult"
+                    class="report-result"
+                    style="display: none;"
+            >
+
+                <div class="report-result-header">
+
+                    <div>
+
+                        <h3>
+                            Attendance Report
+                        </h3>
+
+                        <p id="reportSelectedDate">
+                            --
+                        </p>
+
+                    </div>
+
+
+                    <button
+                            type="button"
+                            id="downloadReportButton"
+                            class="download-button"
+                            onclick="downloadAttendanceReport()"
+                    >
+                        📥 Download Excel
+                    </button>
+
+                </div>
+
+
+
+                <!-- REPORT STATISTICS -->
+
+                <div class="report-stats">
+
+                    <div class="report-stat total-report-stat">
+
+                        <span>
+                            Total Students
+                        </span>
+
+                        <strong id="reportTotalStudents">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="report-stat present-report-stat">
+
+                        <span>
+                            Present
+                        </span>
+
+                        <strong id="reportPresentStudents">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="report-stat absent-report-stat">
+
+                        <span>
+                            Absent
+                        </span>
+
+                        <strong id="reportAbsentStudents">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- REPORT ABSENTEE TABLE -->
+
+                <div class="report-table-container">
+
+                    <h3>
+                        Absent Students
+                    </h3>
+
+
+                    <table>
+
+                        <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Roll Number</th>
+
+                            <th>Student Name</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody id="reportAbsenteeList">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
@@ -303,7 +494,66 @@
 
         </div>
 
+        <!-- =====================================================
+       PRESENT STUDENTS
+  ===================================================== -->
 
+        <section class="present-section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Present Students</h2>
+
+                    <p>
+                        Students who have been scanned today
+                    </p>
+                </div>
+
+                <span
+                        class="present-count"
+                        id="presentCount">
+
+            0 Present
+
+        </span>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table class="attendance-table">
+
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ROLL NUMBER</th>
+                        <th>STUDENT NAME</th>
+                        <th>STATUS</th>
+                    </tr>
+                    </thead>
+
+
+                    <tbody id="presentStudentsTable">
+
+                    <tr>
+                        <td
+                                colspan="4"
+                                style="text-align: center;">
+
+                            No students present yet.
+
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
 
         <!-- ================= ABSENTEES ================= -->
 
@@ -370,6 +620,7 @@
 
 
 <!-- ================= FOOTER ================= -->
+
 <footer class="site-footer">
 
     <div class="footer-line"></div>
@@ -398,11 +649,12 @@
 
 
 
-<!-- QR / BARCODE LIBRARY -->
+<!-- ================= QR / BARCODE LIBRARY ================= -->
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
-<!-- OUR JAVASCRIPT -->
+
+<!-- ================= OUR JAVASCRIPT ================= -->
 
 <script src="script.js"></script>
 

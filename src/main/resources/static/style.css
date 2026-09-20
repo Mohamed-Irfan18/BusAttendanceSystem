@@ -1401,3 +1401,337 @@ tbody tr:hover {
         width: 95%;
     }
 }
+/* =====================================================
+   ATTENDANCE REPORT
+===================================================== */
+
+.report-card {
+    background: white;
+    border: 1px solid #e7ebf1;
+    border-radius: 20px;
+    padding: 28px;
+    margin-top: 20px;
+    box-shadow: 0 8px 28px rgba(20, 30, 50, 0.05);
+}
+
+.report-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.report-heading h2 {
+    font-size: 21px;
+    margin-bottom: 6px;
+}
+
+.report-heading p {
+    color: #7a8496;
+    font-size: 13px;
+}
+
+.report-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #eef3ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    flex-shrink: 0;
+}
+
+/* REPORT CONTROLS */
+
+.report-controls {
+    display: flex;
+    align-items: end;
+    gap: 14px;
+    margin-top: 22px;
+    max-width: 650px;
+}
+
+.report-date-wrapper {
+    flex: 1;
+}
+
+.report-date-wrapper label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4b5565;
+    margin-bottom: 7px;
+}
+
+.report-date-wrapper input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #dce1e8;
+    border-radius: 11px;
+    padding: 0 13px;
+    font-size: 14px;
+    outline: none;
+    background: white;
+}
+
+.report-date-wrapper input:focus {
+    border-color: #3264e8;
+    box-shadow: 0 0 0 4px rgba(50, 100, 232, 0.10);
+}
+
+/* REPORT MESSAGE */
+
+.report-message {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    min-height: 20px;
+}
+
+/* REPORT RESULT */
+
+.report-result {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid #edf0f4;
+}
+
+.report-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.report-result-header h3 {
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.report-result-header p {
+    color: #7a8496;
+    font-size: 12px;
+}
+
+/* DOWNLOAD */
+
+.download-button {
+    border: none;
+    border-radius: 10px;
+    background: #16a34a;
+    color: white;
+    padding: 11px 17px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.download-button:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+}
+
+/* REPORT STATISTICS */
+
+.report-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.report-stat {
+    border-radius: 13px;
+    padding: 17px;
+    border: 1px solid #e7ebf1;
+}
+
+.report-stat span {
+    display: block;
+    font-size: 11px;
+    color: #7a8496;
+    margin-bottom: 5px;
+}
+
+.report-stat strong {
+    font-size: 24px;
+}
+
+.total-report-stat {
+    background: #f7f8fa;
+}
+
+.present-report-stat {
+    background: #f0fdf4;
+}
+
+.present-report-stat strong {
+    color: #16a34a;
+}
+
+.absent-report-stat {
+    background: #fff7f7;
+}
+
+.absent-report-stat strong {
+    color: #dc2626;
+}
+
+/* REPORT TABLE */
+
+.report-table-container {
+    border: 1px solid #e7ebf1;
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+.report-table-container h3 {
+    padding: 16px 18px;
+    font-size: 15px;
+    background: #f7f8fa;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.report-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table-container th {
+    padding: 11px 18px;
+    font-size: 10px;
+    text-align: left;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.report-table-container td {
+    padding: 13px 18px;
+    border-top: 1px solid #edf0f4;
+    font-size: 13px;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .report-card {
+        padding: 22px;
+    }
+
+    .report-heading {
+        align-items: flex-start;
+    }
+
+    .report-controls {
+        flex-direction: column;
+        align-items: stretch;
+        max-width: none;
+    }
+
+    .report-controls .primary-button {
+        width: 100%;
+    }
+
+    .report-result-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .download-button {
+        width: 100%;
+    }
+
+    .report-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .report-table-container {
+        overflow-x: auto;
+    }
+
+    .report-table-container table {
+        min-width: 550px;
+    }
+}
+
+/* Present Students Section */
+
+.present-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+/* Section Header */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: #102a43;
+    font-size: 20px;
+}
+
+.section-header p {
+    margin-top: 6px;
+    color: #7b8794;
+    font-size: 13px;
+}
+
+/* Present Count */
+
+.present-count {
+    background: #e6f7ed;
+    color: #16803c;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Attendance Table */
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.attendance-table th {
+    background: #f7f9fc;
+    color: #52606d;
+    font-size: 11px;
+    text-align: left;
+    padding: 14px;
+}
+
+.attendance-table td {
+    padding: 16px 14px;
+    border-bottom: 1px solid #edf0f5;
+    color: #102a43;
+    font-size: 12px;
+}
+
+/* Present Status */
+
+.present-status {
+    display: inline-block;
+    background: #e6f7ed;
+    color: #16803c;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+}

@@ -8,6 +8,10 @@ let selectedBusRoute = null;
 
 let scanner = null;
 
+let approvalStudentId = null;
+
+let currentReportData = null;
+
 
 // =====================================================
 // PAGE LOAD
@@ -20,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
     displayCurrentDate();
 
     createApprovalModal();
+
+    setDefaultReportDate();
 
 });
 
@@ -38,8 +44,38 @@ function displayCurrentDate() {
         year: "numeric"
     };
 
-    document.getElementById("currentDate").innerText =
-        date.toLocaleDateString("en-IN", options);
+    const currentDate =
+        document.getElementById("currentDate");
+
+    if (currentDate) {
+
+        currentDate.innerText =
+            date.toLocaleDateString(
+                "en-IN",
+                options
+            );
+    }
+}
+
+
+// =====================================================
+// DEFAULT REPORT DATE
+// =====================================================
+
+function setDefaultReportDate() {
+
+    const reportDate =
+        document.getElementById("reportDate");
+
+    if (reportDate) {
+
+        const today =
+            new Date()
+                .toISOString()
+                .split("T")[0];
+
+        reportDate.value = today;
+    }
 }
 
 
@@ -65,19 +101,23 @@ function handleEnter(event) {
 function selectBus() {
 
     const input =
-        document.getElementById("busNumberInput");
+        document.getElementById(
+            "busNumberInput"
+        );
 
     const busNumber =
         input.value.trim();
 
     const error =
-        document.getElementById("busError");
+        document.getElementById(
+            "busError"
+        );
 
 
     error.innerText = "";
 
 
-    // Validate input
+    // Validate bus number
 
     if (busNumber === "") {
 
@@ -97,7 +137,7 @@ function selectBus() {
     }
 
 
-    // Get buses from backend
+    // Get buses
 
     fetch("/buses")
 
@@ -108,7 +148,6 @@ function selectBus() {
                 throw new Error(
                     "Unable to load buses"
                 );
-
             }
 
             return response.json();
@@ -118,30 +157,36 @@ function selectBus() {
 
         .then(buses => {
 
-            console.log("Buses:", buses);
-
-
-            // Find entered bus
-
-            const bus = buses.find(
-                b =>
-                    Number(b.busNumber)
-                    ===
-                    Number(busNumber)
+            console.log(
+                "Buses:",
+                buses
             );
 
 
-            // Bus doesn't exist
+            // Find bus
+
+            const bus =
+                buses.find(
+                    b =>
+                        Number(b.busNumber)
+                        ===
+                        Number(busNumber)
+                );
+
+
+            // Bus not found
 
             if (!bus) {
 
                 error.innerText =
-                    "Bus " + busNumber +
-                    " was not found in the database.";
+                    "Bus "
+                    + busNumber
+                    + " was not found in the database.";
 
                 document.getElementById(
                     "attendanceSection"
-                ).style.display = "none";
+                ).style.display =
+                    "none";
 
                 return;
             }
@@ -159,11 +204,12 @@ function selectBus() {
                 bus.route;
 
 
-            // Display dashboard
+            // Show dashboard
 
             document.getElementById(
                 "attendanceSection"
-            ).style.display = "block";
+            ).style.display =
+                "block";
 
 
             document.getElementById(
@@ -175,15 +221,47 @@ function selectBus() {
             document.getElementById(
                 "busRoute"
             ).innerText =
-                bus.route || "Route not available";
+                bus.route ||
+                "Route not available";
 
 
-            // Load attendance
+            // Load today's attendance
 
-            loadAttendance(selectedBusId);
+            loadAttendance(
+                selectedBusId
+            );
 
 
-            // Scroll dashboard into view
+            // Reset previous report
+
+            currentReportData =
+                null;
+
+            const reportResult =
+                document.getElementById(
+                    "reportResult"
+                );
+
+            if (reportResult) {
+
+                reportResult.style.display =
+                    "none";
+            }
+
+
+            const reportMessage =
+                document.getElementById(
+                    "reportMessage"
+                );
+
+            if (reportMessage) {
+
+                reportMessage.innerText =
+                    "";
+            }
+
+
+            // Scroll dashboard
 
             document.getElementById(
                 "attendanceSection"
@@ -207,13 +285,14 @@ function selectBus() {
 
 
 // =====================================================
-// LOAD ATTENDANCE
+// LOAD TODAY'S ATTENDANCE
 // =====================================================
 
 function loadAttendance(busId) {
 
     fetch(
-        "/attendance/bus/" + busId
+        "/attendance/bus/"
+        + busId
     )
 
         .then(response => {
@@ -223,7 +302,6 @@ function loadAttendance(busId) {
                 throw new Error(
                     "Unable to load attendance"
                 );
-
             }
 
             return response.json();
@@ -239,9 +317,9 @@ function loadAttendance(busId) {
             );
 
 
-            // ==========================
+            // =================================================
             // NUMBERS
-            // ==========================
+            // =================================================
 
             document.getElementById(
                 "totalStudents"
@@ -261,9 +339,9 @@ function loadAttendance(busId) {
                 data.absentStudents;
 
 
-            // ==========================
+            // =================================================
             // ABSENT BADGE
-            // ==========================
+            // =================================================
 
             document.getElementById(
                 "absentBadge"
@@ -272,14 +350,15 @@ function loadAttendance(busId) {
                 + " Absent";
 
 
-            // ==========================
+            // =================================================
             // ATTENDANCE PERCENTAGE
-            // ==========================
+            // =================================================
 
             let percentage = 0;
 
-
-            if (data.totalStudents > 0) {
+            if (
+                data.totalStudents > 0
+            ) {
 
                 percentage =
                     Math.round(
@@ -289,7 +368,6 @@ function loadAttendance(busId) {
                             data.totalStudents
                         ) * 100
                     );
-
             }
 
 
@@ -305,15 +383,14 @@ function loadAttendance(busId) {
                 percentage + "%";
 
 
-            // ==========================
+            // =================================================
             // ABSENTEE TABLE
-            // ==========================
+            // =================================================
 
             const list =
                 document.getElementById(
                     "absenteeList"
                 );
-
 
             list.innerHTML = "";
 
@@ -324,7 +401,9 @@ function loadAttendance(busId) {
             ) {
 
                 const row =
-                    document.createElement("tr");
+                    document.createElement(
+                        "tr"
+                    );
 
 
                 row.innerHTML = `
@@ -343,7 +422,6 @@ function loadAttendance(busId) {
                 list.appendChild(row);
 
                 return;
-
             }
 
 
@@ -351,11 +429,12 @@ function loadAttendance(busId) {
                 (student, index) => {
 
                     const row =
-                        document.createElement("tr");
+                        document.createElement(
+                            "tr"
+                        );
 
 
                     row.innerHTML = `
-
                         <td>
                             ${index + 1}
                         </td>
@@ -375,7 +454,6 @@ function loadAttendance(busId) {
                                 ABSENT
                             </span>
                         </td>
-
                     `;
 
 
@@ -390,7 +468,6 @@ function loadAttendance(busId) {
         .catch(error => {
 
             console.error(error);
-
 
             document.getElementById(
                 "scanResult"
@@ -408,9 +485,9 @@ function loadAttendance(busId) {
 
 function startScanner() {
 
-    // Check bus
-
-    if (selectedBusId === null) {
+    if (
+        selectedBusId === null
+    ) {
 
         alert(
             "Please select a bus first."
@@ -419,8 +496,6 @@ function startScanner() {
         return;
     }
 
-
-    // Check library
 
     if (
         typeof Html5Qrcode ===
@@ -432,11 +507,8 @@ function startScanner() {
         );
 
         return;
-
     }
 
-
-    // Stop previous scanner
 
     if (scanner) {
 
@@ -457,7 +529,9 @@ function startScanner() {
 
 
     scanner =
-        new Html5Qrcode("reader");
+        new Html5Qrcode(
+            "reader"
+        );
 
 
     const config = {
@@ -487,15 +561,16 @@ function startScanner() {
     scanner.start(
 
         {
-            facingMode: "environment"
+            facingMode:
+                "environment"
         },
 
         config,
 
 
-        // ==========================
-        // SUCCESS
-        // ==========================
+        // =================================================
+        // SCAN SUCCESS
+        // =================================================
 
         decodedText => {
 
@@ -522,13 +597,13 @@ function startScanner() {
         },
 
 
-        // ==========================
+        // =================================================
         // SCAN FAILURE
-        // ==========================
+        // =================================================
 
         errorMessage => {
 
-            // Ignore continuous scan errors
+            // Ignore continuous scanner errors
 
         }
 
@@ -537,7 +612,9 @@ function startScanner() {
 
         .catch(error => {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
 
             document.getElementById(
@@ -547,8 +624,8 @@ function startScanner() {
 
 
             alert(
-                "Unable to start camera. " +
-                "Please allow camera permission."
+                "Unable to start camera. "
+                + "Please allow camera permission."
             );
 
         });
@@ -565,7 +642,6 @@ function stopScanner() {
     if (!scanner) {
 
         return;
-
     }
 
 
@@ -599,14 +675,15 @@ function stopScanner() {
 
 function manualAttendance() {
 
-    if (selectedBusId === null) {
+    if (
+        selectedBusId === null
+    ) {
 
         alert(
             "Please select a bus first."
         );
 
         return;
-
     }
 
 
@@ -627,7 +704,6 @@ function manualAttendance() {
         );
 
         return;
-
     }
 
 
@@ -645,43 +721,45 @@ function manualAttendance() {
 // MARK ATTENDANCE
 // =====================================================
 
-function markAttendance(studentId) {
+function markAttendance(
+    studentId
+) {
 
-    if (selectedBusId === null) {
+    if (
+        selectedBusId === null
+    ) {
 
         return;
-
     }
 
 
-    document.getElementById(
-        "scanResult"
-    ).innerText =
+    const scanResult =
+        document.getElementById(
+            "scanResult"
+        );
+
+
+    scanResult.innerText =
         "Checking student...";
 
 
-    document.getElementById(
-        "scanResult"
-    ).style.color =
+    scanResult.style.color =
         "#3264e8";
 
 
     // =================================================
-    // NEW API
-    // /attendance/check
+    // CHECK ATTENDANCE
     // =================================================
 
     fetch(
 
         "/attendance/check"
-        +
-        "?studentId="
-        +
-        encodeURIComponent(studentId)
-        +
-        "&busId="
-        +
-        selectedBusId,
+        + "?studentId="
+        + encodeURIComponent(
+            studentId
+        )
+        + "&busId="
+        + selectedBusId,
 
         {
             method: "POST"
@@ -699,7 +777,8 @@ function markAttendance(studentId) {
                     status:
                     response.status,
 
-                    data: data
+                    data:
+                    data
 
                 }));
 
@@ -734,25 +813,30 @@ function markAttendance(studentId) {
                 );
 
 
-                // Refresh dashboard
-
+                // Refresh attendance summary
                 loadAttendance(
                     selectedBusId
                 );
 
-                return;
 
+// Refresh present students table
+                displayPresentStudents(
+                    selectedBusId
+                );
+
+                return;
             }
 
 
             // =================================================
-            // STUDENT FROM ANOTHER BUS
+            // OTHER BUS STUDENT
             // =================================================
 
             if (
                 result.status >= 200 &&
                 result.status < 300 &&
-                data.status === "APPROVAL_REQUIRED"
+                data.status ===
+                "APPROVAL_REQUIRED"
             ) {
 
                 showApprovalModal(
@@ -760,7 +844,6 @@ function markAttendance(studentId) {
                 );
 
                 return;
-
             }
 
 
@@ -769,8 +852,7 @@ function markAttendance(studentId) {
             // =================================================
 
             const message =
-                data.message
-                ||
+                data.message ||
                 "Unable to check attendance";
 
 
@@ -783,7 +865,9 @@ function markAttendance(studentId) {
 
         .catch(error => {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
 
             showScanError(
@@ -799,7 +883,9 @@ function markAttendance(studentId) {
 // SUCCESS MESSAGE
 // =====================================================
 
-function showScanSuccess(studentName) {
+function showScanSuccess(
+    studentName
+) {
 
     const result =
         document.getElementById(
@@ -842,7 +928,9 @@ function showScanSuccess(studentName) {
 // ERROR MESSAGE
 // =====================================================
 
-function showScanError(message) {
+function showScanError(
+    message
+) {
 
     const result =
         document.getElementById(
@@ -878,8 +966,6 @@ function showScanError(message) {
 
 function createApprovalModal() {
 
-    // Prevent duplicate modal
-
     if (
         document.getElementById(
             "approvalModal"
@@ -887,12 +973,13 @@ function createApprovalModal() {
     ) {
 
         return;
-
     }
 
 
     const modal =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     modal.id =
@@ -918,29 +1005,49 @@ function createApprovalModal() {
                     class="approval-message">
                 </p>
 
+
                 <div class="student-info">
 
                     <div>
-                        <span>Student</span>
-                        <strong id="approvalStudentName">
+                        <span>
+                            Student
+                        </span>
+
+                        <strong
+                            id="approvalStudentName">
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Student ID</span>
-                        <strong id="approvalStudentId">
+                        <span>
+                            Student ID
+                        </span>
+
+                        <strong
+                            id="approvalStudentId">
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Assigned Bus</span>
-                        <strong id="approvalAssignedBus">
+                        <span>
+                            Assigned Bus
+                        </span>
+
+                        <strong
+                            id="approvalAssignedBus">
                         </strong>
                     </div>
 
+
                     <div>
-                        <span>Current Bus</span>
-                        <strong id="approvalCurrentBus">
+                        <span>
+                            Current Bus
+                        </span>
+
+                        <strong
+                            id="approvalCurrentBus">
                         </strong>
                     </div>
 
@@ -988,8 +1095,6 @@ function createApprovalModal() {
     );
 
 
-    // Add modal CSS dynamically
-
     addApprovalModalStyles();
 
 }
@@ -999,10 +1104,9 @@ function createApprovalModal() {
 // SHOW APPROVAL MODAL
 // =====================================================
 
-let approvalStudentId = null;
-
-
-function showApprovalModal(data) {
+function showApprovalModal(
+    data
+) {
 
     approvalStudentId =
         data.studentId;
@@ -1029,7 +1133,9 @@ function showApprovalModal(data) {
     document.getElementById(
         "approvalAssignedBus"
     ).innerText =
-        "Bus " + data.assignedBusId;
+        data.assignedBusId === null
+            ? "Not assigned"
+            : "Bus " + data.assignedBusId;
 
 
     document.getElementById(
@@ -1057,7 +1163,6 @@ function allowAttendance() {
     ) {
 
         return;
-
     }
 
 
@@ -1073,9 +1178,11 @@ function allowAttendance() {
         );
 
 
-    allowButton.disabled = true;
+    allowButton.disabled =
+        true;
 
-    denyButton.disabled = true;
+    denyButton.disabled =
+        true;
 
 
     allowButton.innerText =
@@ -1085,16 +1192,12 @@ function allowAttendance() {
     fetch(
 
         "/attendance/allow"
-        +
-        "?studentId="
-        +
-        encodeURIComponent(
+        + "?studentId="
+        + encodeURIComponent(
             approvalStudentId
         )
-        +
-        "&busId="
-        +
-        selectedBusId,
+        + "&busId="
+        + selectedBusId,
 
         {
             method: "POST"
@@ -1112,7 +1215,8 @@ function allowAttendance() {
                     status:
                     response.status,
 
-                    data: data
+                    data:
+                    data
 
                 }));
 
@@ -1142,7 +1246,14 @@ function allowAttendance() {
                 );
 
 
+                // Refresh attendance summary
                 loadAttendance(
+                    selectedBusId
+                );
+
+
+// Refresh present students table
+                displayPresentStudents(
                     selectedBusId
                 );
 
@@ -1170,7 +1281,9 @@ function allowAttendance() {
 
         .catch(error => {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
 
             closeApprovalModal();
@@ -1234,7 +1347,8 @@ function denyAttendance() {
     }, 2500);
 
 
-    approvalStudentId = null;
+    approvalStudentId =
+        null;
 
 }
 
@@ -1255,11 +1369,11 @@ function closeApprovalModal() {
 
         modal.style.display =
             "none";
-
     }
 
 
-    approvalStudentId = null;
+    approvalStudentId =
+        null;
 
 }
 
@@ -1271,7 +1385,9 @@ function closeApprovalModal() {
 function addApprovalModalStyles() {
 
     const style =
-        document.createElement("style");
+        document.createElement(
+            "style"
+        );
 
 
     style.innerHTML = `
@@ -1554,6 +1670,7 @@ function addApprovalModalStyles() {
 
             }
 
+
             to {
 
                 opacity: 1;
@@ -1586,7 +1703,8 @@ function addApprovalModalStyles() {
 
             .approval-buttons {
 
-                flex-direction: column-reverse;
+                flex-direction:
+                    column-reverse;
 
             }
 
@@ -1598,5 +1716,739 @@ function addApprovalModalStyles() {
     document.head.appendChild(
         style
     );
+
+}
+
+
+// =====================================================
+// ATTENDANCE REPORT
+// =====================================================
+
+
+// =====================================================
+// LOAD ATTENDANCE REPORT
+// =====================================================
+
+function loadAttendanceReport() {
+
+    // Check bus
+
+    if (
+        selectedBusId === null
+    ) {
+
+        alert(
+            "Please select a bus first."
+        );
+
+        return;
+    }
+
+
+    const dateInput =
+        document.getElementById(
+            "reportDate"
+        );
+
+
+    const selectedDate =
+        dateInput.value;
+
+
+    const message =
+        document.getElementById(
+            "reportMessage"
+        );
+
+
+    const reportResult =
+        document.getElementById(
+            "reportResult"
+        );
+
+
+    // Validate date
+
+    if (
+        selectedDate === ""
+    ) {
+
+        message.innerText =
+            "Please select a date.";
+
+        message.style.color =
+            "#dc2626";
+
+        reportResult.style.display =
+            "none";
+
+        return;
+    }
+
+
+    // Loading
+
+    message.innerText =
+        "Loading attendance report...";
+
+    message.style.color =
+        "#3264e8";
+
+
+    reportResult.style.display =
+        "none";
+
+
+    // =================================================
+    // CALL DATE API
+    // =================================================
+
+    fetch(
+
+        "/attendance/bus/"
+        + selectedBusId
+        + "/date?date="
+        + encodeURIComponent(
+            selectedDate
+        )
+
+    )
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load attendance report."
+                );
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(data => {
+
+            console.log(
+                "Attendance Report:",
+                data
+            );
+
+
+            currentReportData =
+                data;
+
+
+            // =================================================
+            // NO ATTENDANCE
+            // =================================================
+
+            if (
+                data.attendanceRecorded === false
+            ) {
+
+                message.innerText =
+                    data.message
+                    ||
+                    "No attendance recorded for this date.";
+
+
+                message.style.color =
+                    "#d97706";
+
+
+                reportResult.style.display =
+                    "none";
+
+
+                return;
+            }
+
+
+            // =================================================
+            // ATTENDANCE EXISTS
+            // =================================================
+
+            message.innerText =
+                "Attendance report loaded successfully.";
+
+
+            message.style.color =
+                "#16a34a";
+
+
+            reportResult.style.display =
+                "block";
+
+
+            // =================================================
+            // DATE
+            // =================================================
+
+            document.getElementById(
+                "reportSelectedDate"
+            ).innerText =
+                formatReportDate(
+                    selectedDate
+                );
+
+
+            // =================================================
+            // STATISTICS
+            // =================================================
+
+            document.getElementById(
+                "reportTotalStudents"
+            ).innerText =
+                data.totalStudents;
+
+
+            document.getElementById(
+                "reportPresentStudents"
+            ).innerText =
+                data.presentStudents;
+
+
+            document.getElementById(
+                "reportAbsentStudents"
+            ).innerText =
+                data.absentStudents;
+
+
+            // =================================================
+            // ABSENTEE TABLE
+            // =================================================
+
+            const list =
+                document.getElementById(
+                    "reportAbsenteeList"
+                );
+
+
+            list.innerHTML =
+                "";
+
+
+            if (
+                !data.absentees ||
+                data.absentees.length === 0
+            ) {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+                    <td
+                        colspan="4"
+                        style="
+                            text-align:center;
+                            color:#16a34a;
+                            padding:25px;
+                            font-weight:600;
+                        "
+                    >
+                        ✓ All students were present
+                    </td>
+                `;
+
+
+                list.appendChild(
+                    row
+                );
+
+
+                return;
+            }
+
+
+            // Add absent students
+
+            data.absentees.forEach(
+                (student, index) => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    row.innerHTML = `
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${student.studentId}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${student.name}
+                        </td>
+
+                        <td>
+                            <span class="status">
+                                ABSENT
+                            </span>
+                        </td>
+                    `;
+
+
+                    list.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        })
+
+
+        .catch(error => {
+
+            console.error(
+                error
+            );
+
+
+            currentReportData =
+                null;
+
+
+            message.innerText =
+                "Unable to load attendance report.";
+
+
+            message.style.color =
+                "#dc2626";
+
+
+            reportResult.style.display =
+                "none";
+
+        });
+
+}
+
+
+// =====================================================
+// FORMAT REPORT DATE
+// =====================================================
+
+function formatReportDate(
+    dateString
+) {
+
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// =====================================================
+// DOWNLOAD ATTENDANCE REPORT
+// =====================================================
+
+function downloadAttendanceReport() {
+
+    // Check report
+
+    if (
+        currentReportData === null
+    ) {
+
+        alert(
+            "Please view an attendance report first."
+        );
+
+        return;
+    }
+
+
+    // Check attendance
+
+    if (
+        currentReportData
+            .attendanceRecorded === false
+    ) {
+
+        alert(
+            "There is no attendance recorded for this date."
+        );
+
+        return;
+    }
+
+
+    const data =
+        currentReportData;
+
+
+    const selectedDate =
+        document.getElementById(
+            "reportDate"
+        ).value;
+
+
+    // =================================================
+    // CREATE CSV
+    // =================================================
+
+    const rows = [];
+
+
+    rows.push([
+        "College Bus Attendance Report"
+    ]);
+
+
+    rows.push([
+        "Bus Number",
+        selectedBusNumber
+    ]);
+
+
+    rows.push([
+        "Route",
+        selectedBusRoute || "N/A"
+    ]);
+
+
+    rows.push([
+        "Date",
+        formatReportDate(
+            selectedDate
+        )
+    ]);
+
+
+    rows.push([]);
+
+
+    rows.push([
+        "Total Students",
+        data.totalStudents
+    ]);
+
+
+    rows.push([
+        "Present Students",
+        data.presentStudents
+    ]);
+
+
+    rows.push([
+        "Absent Students",
+        data.absentStudents
+    ]);
+
+
+    rows.push([]);
+
+
+    rows.push([
+        "#",
+        "Roll Number",
+        "Student Name",
+        "Status"
+    ]);
+
+
+    // =================================================
+    // ABSENT STUDENTS
+    // =================================================
+
+    if (
+        data.absentees &&
+        data.absentees.length > 0
+    ) {
+
+        data.absentees.forEach(
+            (student, index) => {
+
+                rows.push([
+                    index + 1,
+                    student.studentId,
+                    student.name,
+                    "ABSENT"
+                ]);
+
+            }
+        );
+
+    }
+
+    else {
+
+        rows.push([
+            "",
+            "",
+            "All students were present",
+            "PRESENT"
+        ]);
+
+    }
+
+
+    // =================================================
+    // CONVERT TO CSV
+    // =================================================
+
+    const csvContent =
+        rows
+            .map(row =>
+                row
+                    .map(value =>
+                        `"${String(
+                            value ?? ""
+                        ).replace(
+                            /"/g,
+                            '""'
+                        )}"`
+                    )
+                    .join(",")
+            )
+            .join("\n");
+
+
+    // =================================================
+    // CREATE FILE
+    // =================================================
+
+    const blob =
+        new Blob(
+            [
+                "\uFEFF" +
+                csvContent
+            ],
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "Bus_"
+        + selectedBusNumber
+        + "_Attendance_"
+        + selectedDate
+        + ".csv";
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+}
+
+// =====================================================
+// DISPLAY PRESENT STUDENTS
+// =====================================================
+
+async function displayPresentStudents(busId) {
+
+    const tableBody = document.getElementById(
+        "presentStudentsTable"
+    );
+
+    const presentCount = document.getElementById(
+        "presentCount"
+    );
+
+
+    // Check HTML elements
+    if (!tableBody || !presentCount) {
+
+        console.error(
+            "Present students HTML elements not found"
+        );
+
+        return;
+    }
+
+
+    // Check bus ID
+    if (!busId) {
+
+        console.error(
+            "Bus ID is missing"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        // Call backend API
+        const response = await fetch(
+            `http://localhost:8081/attendance/bus/${busId}/present`
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load present students"
+            );
+
+        }
+
+
+        // Convert response to JSON
+        const presentStudents =
+            await response.json();
+
+
+        // Clear previous rows
+        tableBody.innerHTML = "";
+
+
+        // Check whether students are present
+        if (
+            !Array.isArray(presentStudents) ||
+            presentStudents.length === 0
+        ) {
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="4"
+                        style="text-align: center;">
+
+                        No students present yet.
+
+                    </td>
+                </tr>
+            `;
+
+            presentCount.textContent =
+                "0 Present";
+
+            return;
+
+        }
+
+
+        // Display every present student
+        presentStudents.forEach(
+            (student, index) => {
+
+                const row =
+                    document.createElement("tr");
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${student.rollNumber || "N/A"}
+                    </td>
+
+                    <td>
+                        ${student.studentName || "N/A"}
+                    </td>
+
+                    <td>
+                        <span class="present-status">
+                            PRESENT
+                        </span>
+                    </td>
+
+                `;
+
+
+                tableBody.appendChild(row);
+
+            }
+        );
+
+
+        // Update count
+        presentCount.textContent =
+            `${presentStudents.length} Present`;
+
+
+        console.log(
+            "Present students loaded:",
+            presentStudents
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error fetching present students:",
+            error
+        );
+
+
+        tableBody.innerHTML = `
+            <tr>
+                <td
+                    colspan="4"
+                    style="text-align: center;">
+
+                    Unable to load attendance.
+
+                </td>
+            </tr>
+        `;
+
+
+        presentCount.textContent =
+            "0 Present";
+
+    }
 
 }
