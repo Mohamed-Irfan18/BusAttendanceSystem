@@ -304,16 +304,28 @@ function loadAttendance(busId) {
             }
         });
 }
-
-
 // =====================================================
 // DISPLAY PRESENT STUDENTS
 // =====================================================
 
 async function displayPresentStudents(busId) {
+
+    console.log("Selected Bus ID:", busId);
+
     try {
+
         const response = await fetch(
             `/attendance/bus/${busId}/present`
+        );
+
+        console.log(
+            "Response Status:",
+            response.status
+        );
+
+        console.log(
+            "Response URL:",
+            response.url
         );
 
         if (!response.ok) {
@@ -325,7 +337,7 @@ async function displayPresentStudents(busId) {
         const students = await response.json();
 
         console.log(
-            "Present students:",
+            "Present Students From Backend:",
             students
         );
 
@@ -338,6 +350,7 @@ async function displayPresentStudents(busId) {
         );
 
         if (!tableBody || !presentCount) {
+
             console.error(
                 "Present student HTML elements not found"
             );
@@ -345,20 +358,29 @@ async function displayPresentStudents(busId) {
             return;
         }
 
+        // Update present count
+
         presentCount.textContent =
             `${students.length} Present`;
 
+        // Clear previous table rows
+
         tableBody.innerHTML = "";
+
+        // Check whether there are no present students
 
         if (
             !students ||
             students.length === 0
         ) {
+
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="4"
-                        style="text-align:center;">
+                        style="text-align: center;">
+
                         No students present yet.
+
                     </td>
                 </tr>
             `;
@@ -366,11 +388,17 @@ async function displayPresentStudents(busId) {
             return;
         }
 
+        // Display every present student
+
         students.forEach((student, index) => {
+
             const row = document.createElement("tr");
 
             row.innerHTML = `
-                <td>${index + 1}</td>
+
+                <td>
+                    ${index + 1}
+                </td>
 
                 <td>
                     ${student.rollNumber || "N/A"}
@@ -385,12 +413,20 @@ async function displayPresentStudents(busId) {
                         PRESENT
                     </span>
                 </td>
+
             `;
 
             tableBody.appendChild(row);
+
         });
 
+        console.log(
+            "Present students loaded successfully:",
+            students.length
+        );
+
     } catch (errorObject) {
+
         console.error(
             "Error loading present students:",
             errorObject
@@ -405,22 +441,32 @@ async function displayPresentStudents(busId) {
         );
 
         if (tableBody) {
+
             tableBody.innerHTML = `
+
                 <tr>
                     <td colspan="4"
-                        style="text-align:center;">
+                        style="text-align: center;">
+
                         Unable to load attendance.
+
                     </td>
                 </tr>
+
             `;
+
         }
 
         if (presentCount) {
-            presentCount.textContent = "0 Present";
-        }
-    }
-}
 
+            presentCount.textContent =
+                "0 Present";
+
+        }
+
+    }
+
+}
 
 // =====================================================
 // START BARCODE SCANNER
