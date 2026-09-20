@@ -164,11 +164,11 @@ function selectBus() {
                 reportMessage.innerText = "";
             }
 
-            document.getElementById(
-                "attendanceSection"
-            ).scrollIntoView({
-                behavior: "smooth"
-            });
+            //document.getElementById(
+              //  "attendanceSection"
+            //).scrollIntoView({
+              //  behavior: "smooth"
+            //});
         })
 
         .catch(errorObject => {
@@ -308,7 +308,9 @@ function loadAttendance(busId) {
 // DISPLAY PRESENT STUDENTS
 // =====================================================
 
-async function displayPresentStudents(busId) {
+async function displayPresentStudents(busId)
+{
+    const startTime = performance.now();
 
     console.log("Selected Bus ID:", busId);
 
@@ -316,6 +318,14 @@ async function displayPresentStudents(busId) {
 
         const response = await fetch(
             `/attendance/bus/${busId}/present`
+        );
+
+        const endTime = performance.now();
+
+        console.log(
+            "Present Students API Time:",
+            (endTime - startTime).toFixed(2),
+            "ms"
         );
 
         console.log(
