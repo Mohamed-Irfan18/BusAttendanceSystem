@@ -506,19 +506,24 @@ function startScanner() {
     scanner = new Html5Qrcode("reader");
 
     const config = {
-        fps: 10,
 
+        // Check the camera frames more frequently
+        fps: 15,
+
+        // Suitable scanning area for horizontal barcodes
         qrbox: {
-            width: 300,
-            height: 150
+            width: 350,
+            height: 120
         },
 
+        // Keep only the barcode format used by your ID cards
         formatsToSupport: [
-            Html5QrcodeSupportedFormats.CODE_128,
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.EAN_8,
-            Html5QrcodeSupportedFormats.UPC_A
-        ]
+            Html5QrcodeSupportedFormats.CODE_128
+        ],
+
+        // Avoid unnecessary image flipping
+        disableFlip: true
+
     };
 
     scanner.start(
