@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9f6663c2-f140-4b1b-b665-64dad8f86fbe" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/controller/AttendanceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/controller/AttendanceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/dto/AttendanceSummary.java" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/dto/AttendanceSummary.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/repository/AttendanceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/repository/AttendanceRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/service/AttendanceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/service/AttendanceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +61,7 @@
     <configuration name="BusAttendanceSystemApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <envs>
         <env name="DB_PASSWORD" value="jIrBtUKygVQIOPFntchuKmozQwidPrKa" />
-        <env name="DB_URL" value="jdbc:mysql://127.0.0.1:50497/railway" />
+        <env name="DB_URL" value="jdbc:mysql://127.0.0.1:52351/railway" />
         <env name="DB_USERNAME" value="root" />
       </envs>
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
