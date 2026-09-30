@@ -162,6 +162,15 @@ function selectBus() {
 
             if (reportMessage) {
                 reportMessage.innerText = "";
+
+            // Clear previous scan result
+            const scanResult = document.getElementById("scanResult");
+
+            if (scanResult) {
+                scanResult.innerText = "";
+                scanResult.style.color = "";
+                scanResult.style.background = "transparent";
+            }
             }
 
             //document.getElementById(
