@@ -173,19 +173,7 @@ function selectBus() {
                 scanResult.style.background = "transparent";
             }
 
-            // Reset previous approval state
-            approvalStudentId = null;
-
-            // Clear previous scan result
-            const scanResult = document.getElementById("scanResult");
-
-            if (scanResult) {
-                scanResult.innerText = "";
-                scanResult.style.color = "";
-                scanResult.style.background = "transparent";
-            }
-
-            // Reset previous approval state
+// Reset previous approval state
             approvalStudentId = null;
 
             //document.getElementById(

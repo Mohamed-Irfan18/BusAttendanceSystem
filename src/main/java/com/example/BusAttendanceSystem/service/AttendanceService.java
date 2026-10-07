@@ -153,11 +153,8 @@ public class AttendanceService {
                     student.getName(),
 
                     null,
-<<<<<<< HEAD
-=======
 
                     // Actual bus number
->>>>>>> eb04819 (Fix bus number response and attendance approval)
                     bus.getBusNumber()
             );
         }
@@ -194,15 +191,11 @@ public class AttendanceService {
                     "Attendance marked successfully",
                     student.getStudentId(),
                     student.getName(),
-<<<<<<< HEAD
-                    assignedBusId,
-=======
 
                     // Actual assigned bus number
                     assignedBusNumber,
 
                     // Actual current bus number
->>>>>>> eb04819 (Fix bus number response and attendance approval)
                     bus.getBusNumber()
             );
         }
@@ -225,15 +218,11 @@ public class AttendanceService {
 
                 student.getStudentId(),
                 student.getName(),
-<<<<<<< HEAD
-                assignedBusNumber,
-=======
 
                 // Actual assigned bus number
                 assignedBusNumber,
 
                 // Actual current bus number
->>>>>>> eb04819 (Fix bus number response and attendance approval)
                 bus.getBusNumber()
         );
     }

@@ -24,6 +24,9 @@
 
         <div>
             <h1>College Bus Attendance</h1>
+            <div class="deployment-version">
+                🟢 version: v2.0
+            </div>
             <p>Faculty Attendance Portal</p>
         </div>
 
@@ -496,9 +499,11 @@
 
         </div>
 
-        <!-- =====================================================
-       PRESENT STUDENTS
-  ===================================================== -->
+        <!--
+     =====================================================
+     PRESENT STUDENTS
+     =====================================================
+     -->
 
         <section class="present-section">
 
@@ -506,57 +511,60 @@
 
                 <div class="table-header">
 
-                <div>
-                    <h2>Present Students</h2>
+                    <div>
+                        <h2>Present Students</h2>
 
-                    <p>
-                        Students who have been scanned today
-                    </p>
+                        <p>
+                            Students who have been scanned today
+                        </p>
+                    </div>
+
+                    <span
+                            class="present-count"
+                            id="presentCount">
+                0 Present
+            </span>
+
                 </div>
 
-                <span
-                        class="present-count"
-                        id="presentCount">
 
-                      0 Present
-                </span>
+                <div class="table-container">
 
-            </div>
+                    <table class="attendance-table">
 
-
-            <div class="table-container">
-
-                <table class="attendance-table">
-
-                    <thead>
-                    <tr>
-                        <th>S.NO</th>
-                        <th>ROLL NUMBER</th>
-                        <th>STUDENT NAME</th>
-                        <th>STATUS</th>
-                    </tr>
-                    </thead>
+                        <thead>
+                        <tr>
+                            <th>S.NO</th>
+                            <th>ROLL NUMBER</th>
+                            <th>STUDENT NAME</th>
+                            <th>STATUS</th>
+                        </tr>
+                        </thead>
 
 
-                    <tbody id="presentStudentsTable">
+                        <tbody id="presentStudentsTable">
 
-                    <tr>
-                        <td
-                                colspan="4"
-                                style="text-align: center;">
+                        <tr>
+                            <td
+                                    colspan="4"
+                                    style="text-align: center;">
 
-                            No students present yet.
+                                No students present yet.
 
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
 
-                    </tbody>
+                        </tbody>
 
-                </table>
+                    </table>
+
+                </div>
 
             </div>
 
         </section>
+
+
 
         <!-- ================= ABSENTEES ================= -->
 
@@ -639,7 +647,7 @@
         </p>
 
         <p class="footer-powered">
-            Powered by Simba
+            Done by EEE Department
         </p>
 
         <p class="footer-author">
