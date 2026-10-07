@@ -139,7 +139,7 @@ public class AttendanceService {
                     student.getStudentId(),
                     student.getName(),
                     null,
-                    bus.getId()
+                    bus.getBusNumber()
             );
         }
 
@@ -159,7 +159,7 @@ public class AttendanceService {
                     student.getStudentId(),
                     student.getName(),
                     assignedBusId,
-                    bus.getId()
+                    bus.getBusNumber()
             );
         }
 
@@ -174,8 +174,8 @@ public class AttendanceService {
                         "?",
                 student.getStudentId(),
                 student.getName(),
-                assignedBusId,
-                bus.getId()
+                assignedBusNumber,
+                bus.getBusNumber()
         );
     }
 

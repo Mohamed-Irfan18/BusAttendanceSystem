@@ -173,6 +173,18 @@ function selectBus() {
             }
             }
 
+            // Clear previous scan result
+            const scanResult = document.getElementById("scanResult");
+
+            if (scanResult) {
+                scanResult.innerText = "";
+                scanResult.style.color = "";
+                scanResult.style.background = "transparent";
+            }
+
+            // Reset previous approval state
+            approvalStudentId = null;
+
             //document.getElementById(
               //  "attendanceSection"
             //).scrollIntoView({
@@ -887,14 +899,14 @@ function showApprovalModal(data) {
     document.getElementById(
         "approvalAssignedBus"
     ).innerText =
-        data.assignedBusId === null
+        data.assignedBusNumber === null
             ? "Not assigned"
-            : "Bus " + data.assignedBusId;
+            : "Bus " + data.assignedBusNumber;
 
     document.getElementById(
         "approvalCurrentBus"
     ).innerText =
-        "Bus " + data.currentBusId;
+        "Bus " + data.currentBusNumber;
 
     document.getElementById(
         "approvalModal"

@@ -7,8 +7,12 @@
     <list default="true" id="9f6663c2-f140-4b1b-b665-64dad8f86fbe" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BusAttendanceSystem" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/dto/AttendanceCheckResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/dto/AttendanceCheckResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/service/AttendanceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/java/com/example/BusAttendanceSystem/service/AttendanceService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/BusAttendanceSystem/src/main/resources/static/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/BusAttendanceSystem/service/AttendanceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/BusAttendanceSystem/service/AttendanceService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +29,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/BusAttendanceSystem" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Mohamed-Irfan18"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Mohamed-Irfan18/BusAttendanceSystem",
+    "accountId": "5823f989-18e1-4867-8e4b-65425624cb28"
+  }
+}]]></component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -61,7 +77,7 @@
     <configuration name="BusAttendanceSystemApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <envs>
         <env name="DB_PASSWORD" value="jIrBtUKygVQIOPFntchuKmozQwidPrKa" />
-        <env name="DB_URL" value="jdbc:mysql://127.0.0.1:52351/railway" />
+        <env name="DB_URL" value="jdbc:mysql://127.0.0.1:52307/railway" />
         <env name="DB_USERNAME" value="root" />
       </envs>
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
