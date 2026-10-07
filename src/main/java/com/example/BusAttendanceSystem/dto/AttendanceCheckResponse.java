@@ -6,23 +6,23 @@ public class AttendanceCheckResponse {
     private String message;
     private String studentId;
     private String studentName;
-    private Integer assignedBusId;
-    private Integer currentBusId;
+    private Integer assignedBusNumber;
+    private Integer currentBusNumber;
 
     public AttendanceCheckResponse(
             String status,
             String message,
             String studentId,
             String studentName,
-            Integer assignedBusId,
-            Integer currentBusId) {
+            Integer assignedBusNumber,
+            Integer currentBusNumber) {
 
         this.status = status;
         this.message = message;
         this.studentId = studentId;
         this.studentName = studentName;
-        this.assignedBusId = assignedBusId;
-        this.currentBusId = currentBusId;
+        this.assignedBusNumber = assignedBusNumber;
+        this.currentBusNumber = currentBusNumber;
     }
 
     public String getStatus() {
@@ -41,11 +41,11 @@ public class AttendanceCheckResponse {
         return studentName;
     }
 
-    public Integer getAssignedBusId() {
-        return assignedBusId;
+    public Integer getAssignedBusNumber() {
+        return assignedBusNumber;
     }
 
-    public Integer getCurrentBusId() {
-        return currentBusId;
+    public Integer getCurrentBusNumber() {
+        return currentBusNumber;
     }
 }

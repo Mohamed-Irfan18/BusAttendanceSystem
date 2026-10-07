@@ -1,8 +1,8 @@
 package com.example.BusAttendanceSystem.service;
 
-import com.example.BusAttendanceSystem.dto.PresentStudentResponse;
 import com.example.BusAttendanceSystem.dto.AttendanceCheckResponse;
 import com.example.BusAttendanceSystem.dto.AttendanceSummary;
+import com.example.BusAttendanceSystem.dto.PresentStudentResponse;
 import com.example.BusAttendanceSystem.entity.Attendance;
 import com.example.BusAttendanceSystem.entity.Bus;
 import com.example.BusAttendanceSystem.entity.Student;
@@ -50,7 +50,9 @@ public class AttendanceService {
         Bus bus = busRepository.findById(busId)
                 .orElseThrow(() ->
                         new BusNotFoundException(
-                                "Bus with ID " + busId + " not found"
+                                "Bus with ID " +
+                                        busId +
+                                        " not found"
                         ));
 
         Student student =
@@ -62,6 +64,7 @@ public class AttendanceService {
                                                 " not found"
                                 ));
 
+        // Check whether student belongs to this bus
         if (student.getBus() == null ||
                 !student.getBus().getId().equals(busId)) {
 
@@ -83,6 +86,7 @@ public class AttendanceService {
                         );
 
         if (alreadyPresent) {
+
             throw new AttendanceAlreadyMarkedException(
                     "Attendance already marked for " +
                             studentId
@@ -109,6 +113,7 @@ public class AttendanceService {
             String studentId,
             Integer busId) {
 
+        // Current bus
         Bus bus = busRepository.findById(busId)
                 .orElseThrow(() ->
                         new BusNotFoundException(
@@ -117,6 +122,7 @@ public class AttendanceService {
                                         " not found"
                         ));
 
+        // Student
         Student student =
                 studentRepository.findByStudentId(studentId)
                         .orElseThrow(() ->
@@ -126,25 +132,55 @@ public class AttendanceService {
                                                 " not found"
                                 ));
 
+
+        // =====================================================
+        // STUDENT HAS NO ASSIGNED BUS
+        // =====================================================
+
         if (student.getBus() == null) {
 
             return new AttendanceCheckResponse(
                     "APPROVAL_REQUIRED",
+
                     "Student " +
                             student.getName() +
                             " is not assigned to any bus. " +
                             "Allow this student to travel on Bus " +
                             bus.getBusNumber() +
                             "?",
+
                     student.getStudentId(),
                     student.getName(),
+
                     null,
+<<<<<<< HEAD
+=======
+
+                    // Actual bus number
+>>>>>>> eb04819 (Fix bus number response and attendance approval)
                     bus.getBusNumber()
             );
         }
 
+
+        // =====================================================
+        // GET ASSIGNED BUS ID AND BUS NUMBER
+        // =====================================================
+
+        // Database ID
+        // Used only for comparison
         Integer assignedBusId =
                 student.getBus().getId();
+
+        // Actual bus number
+        // Used for displaying to user
+        Integer assignedBusNumber =
+                student.getBus().getBusNumber();
+
+
+        // =====================================================
+        // STUDENT BELONGS TO CURRENT BUS
+        // =====================================================
 
         if (assignedBusId.equals(busId)) {
 
@@ -158,13 +194,27 @@ public class AttendanceService {
                     "Attendance marked successfully",
                     student.getStudentId(),
                     student.getName(),
+<<<<<<< HEAD
                     assignedBusId,
+=======
+
+                    // Actual assigned bus number
+                    assignedBusNumber,
+
+                    // Actual current bus number
+>>>>>>> eb04819 (Fix bus number response and attendance approval)
                     bus.getBusNumber()
             );
         }
 
+
+        // =====================================================
+        // STUDENT BELONGS TO ANOTHER BUS
+        // =====================================================
+
         return new AttendanceCheckResponse(
                 "APPROVAL_REQUIRED",
+
                 "Student " +
                         student.getName() +
                         " is not assigned to Bus " +
@@ -172,9 +222,18 @@ public class AttendanceService {
                         ". Allow this student to travel on Bus " +
                         bus.getBusNumber() +
                         "?",
+
                 student.getStudentId(),
                 student.getName(),
+<<<<<<< HEAD
                 assignedBusNumber,
+=======
+
+                // Actual assigned bus number
+                assignedBusNumber,
+
+                // Actual current bus number
+>>>>>>> eb04819 (Fix bus number response and attendance approval)
                 bus.getBusNumber()
         );
     }
@@ -215,6 +274,7 @@ public class AttendanceService {
                         );
 
         if (alreadyPresent) {
+
             throw new AttendanceAlreadyMarkedException(
                     "Attendance already marked for " +
                             studentId
@@ -316,9 +376,10 @@ public class AttendanceService {
         );
     }
 
+
     // =========================================================
-// GET TODAY'S PRESENT STUDENTS
-// =========================================================
+    // GET TODAY'S PRESENT STUDENTS
+    // =========================================================
 
     public List<PresentStudentResponse> getPresentStudents(
             Integer busId) {
@@ -327,14 +388,13 @@ public class AttendanceService {
         busRepository.findById(busId)
                 .orElseThrow(() ->
                         new BusNotFoundException(
-                                "Bus with ID " + busId +
+                                "Bus with ID " +
+                                        busId +
                                         " not found"
                         ));
 
-        // Get today's date
         LocalDate today = LocalDate.now();
 
-        // Get today's present attendance records
         List<Attendance> attendances =
                 attendanceRepository
                         .findByBusIdAndAttendanceDateAndStatus(
@@ -343,12 +403,16 @@ public class AttendanceService {
                                 "PRESENT"
                         );
 
-        // Convert Attendance entities into DTOs
         return attendances.stream()
                 .map(attendance ->
                         new PresentStudentResponse(
-                                attendance.getStudent().getStudentId(),
-                                attendance.getStudent().getName()
+                                attendance
+                                        .getStudent()
+                                        .getStudentId(),
+
+                                attendance
+                                        .getStudent()
+                                        .getName()
                         )
                 )
                 .toList();
@@ -363,7 +427,7 @@ public class AttendanceService {
             Integer busId,
             LocalDate date) {
 
-        // 1. Check whether bus exists
+        // Check whether bus exists
         busRepository.findById(busId)
                 .orElseThrow(() ->
                         new BusNotFoundException(
@@ -372,11 +436,11 @@ public class AttendanceService {
                                         " not found"
                         ));
 
-        // 2. Get students belonging to this bus
+        // Get students belonging to this bus
         List<Student> students =
                 studentRepository.findByBusId(busId);
 
-        // 3. Get attendance for selected date
+        // Get attendance for selected date
         List<Attendance> attendances =
                 attendanceRepository
                         .findByBusIdAndAttendanceDate(
@@ -384,7 +448,7 @@ public class AttendanceService {
                                 date
                         );
 
-        // 4. No attendance recorded for this date
+        // No attendance recorded
         if (attendances.isEmpty()) {
 
             return new AttendanceSummary(
@@ -397,7 +461,7 @@ public class AttendanceService {
             );
         }
 
-        // 5. Store IDs of present students
+        // Store IDs of present students
         Set<Integer> presentStudentIds =
                 attendances.stream()
                         .map(attendance ->
@@ -406,7 +470,6 @@ public class AttendanceService {
                                         .getId())
                         .collect(Collectors.toSet());
 
-        // 6. Calculate totals
         int totalStudents =
                 students.size();
 
@@ -417,7 +480,6 @@ public class AttendanceService {
                 totalStudents -
                         presentStudents;
 
-        // 7. Find absent students
         List<AttendanceSummary.AbsentStudent> absentees =
                 students.stream()
                         .filter(student ->
@@ -431,7 +493,6 @@ public class AttendanceService {
                                 ))
                         .toList();
 
-        // 8. Return report
         return new AttendanceSummary(
                 totalStudents,
                 presentStudents,

@@ -162,15 +162,6 @@ function selectBus() {
 
             if (reportMessage) {
                 reportMessage.innerText = "";
-
-            // Clear previous scan result
-            const scanResult = document.getElementById("scanResult");
-
-            if (scanResult) {
-                scanResult.innerText = "";
-                scanResult.style.color = "";
-                scanResult.style.background = "transparent";
-            }
             }
 
             // Clear previous scan result
@@ -185,10 +176,22 @@ function selectBus() {
             // Reset previous approval state
             approvalStudentId = null;
 
+            // Clear previous scan result
+            const scanResult = document.getElementById("scanResult");
+
+            if (scanResult) {
+                scanResult.innerText = "";
+                scanResult.style.color = "";
+                scanResult.style.background = "transparent";
+            }
+
+            // Reset previous approval state
+            approvalStudentId = null;
+
             //document.getElementById(
-              //  "attendanceSection"
+            //  "attendanceSection"
             //).scrollIntoView({
-              //  behavior: "smooth"
+            //  behavior: "smooth"
             //});
         })
 
@@ -527,24 +530,19 @@ function startScanner() {
     scanner = new Html5Qrcode("reader");
 
     const config = {
+        fps: 10,
 
-        // Check the camera frames more frequently
-        fps: 15,
-
-        // Suitable scanning area for horizontal barcodes
         qrbox: {
-            width: 350,
-            height: 120
+            width: 300,
+            height: 150
         },
 
-        // Keep only the barcode format used by your ID cards
         formatsToSupport: [
-            Html5QrcodeSupportedFormats.CODE_128
-        ],
-
-        // Avoid unnecessary image flipping
-        disableFlip: true
-
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A
+        ]
     };
 
     scanner.start(
